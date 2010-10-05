@@ -47,6 +47,7 @@ all: $(ARNAME) $(SONAME) $(PANAME)
 
 $(ARNAME): $(OBJS)
 	$(AR) rc $@ $(OBJS)
+	ranlib $@
 
 $(SONAME): $(SOBJS)
 	$(CC) -shared -o $@ $(SOBJS)
