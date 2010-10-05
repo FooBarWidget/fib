@@ -16,15 +16,62 @@ int cmp(void *, void *);
 int
 cmp(void *x, void *y)
 {
-	int a, b;
-	a = (int)x;
-	b = (int)y;
-
-	if (a < b)
+	if ((char *) x < (char *) y)
 		return -1;
-	if (a == b)
+	if (x == y)
 		return 0;
 	return 1;
+}
+
+void *
+int_to_pointer(int x)
+{
+    /* Using a union to prevent aliasing issues and compiler warnings. */
+    union {
+        void *pointer;
+        int value;
+    } u1;
+    union {
+        void *pointer;
+        long long value;
+    } u2;
+    
+    if (sizeof(void *) == sizeof(int)) {
+        u1.value = x;
+        return u1.pointer;
+    } else if (sizeof(void *) == sizeof(long long)) {
+        u2.value = x;
+        return u2.pointer;
+    } else {
+        fprintf(stderr, "Pointer size unsupported...");
+        abort();
+        return 0;
+    }
+}
+
+long long
+pointer_to_ll(void *p) {
+    /* Using a union to prevent aliasing issues and compiler warnings. */
+    union {
+        void *pointer;
+        int value;
+    } u1;
+    union {
+        void *pointer;
+        long long value;
+    } u2;
+    
+    if (sizeof(void *) == sizeof(int)) {
+        u1.pointer = p;
+        return u1.value;
+    } else if (sizeof(void *) == sizeof(long long)) {
+        u2.pointer = p;
+        return u2.value;
+    } else {
+        fprintf(stderr, "Pointer size unsupported...");
+        abort();
+        return 0;
+    }
 }
 
 int
@@ -52,14 +99,14 @@ main(void)
 		if (i)
 			printf(", ");
 #endif
-		fh_insert(a, (void *)(x = random()/10));
+		fh_insert(a, int_to_pointer(x = random()/10));
 #if VERBOSE
 		printf("%d", x);
 #endif
 		if (i - e > DIF) {
 			k = random() % MAXEXT;
 			for (j = 0; j < k; j++, e++)
-				printf("throwing: %d\n", (int)fh_extractmin(a));
+				printf("throwing: %lld\n", pointer_to_ll(fh_extractmin(a)));
 		}
 	}
 
@@ -71,7 +118,7 @@ main(void)
 #if VERBOSE
 		if (i)
 			printf(", ");
-		printf("%d", (int)fh_extractmin(a));
+		printf("%lld", pointer_to_ll(fh_extractmin(a)));
 #else
 		fh_extractmin(a);
 #endif
@@ -79,7 +126,7 @@ main(void)
 #if VERBOSE
 	printf("\n");
 #endif
-	if ((int)fh_extractmin(a) == 0)
+	if (fh_extractmin(a) == 0)
 		printf("heap empty!\n");
 	else {
 		printf("heap not empty! ERROR!\n");
