@@ -30,12 +30,39 @@
 #ifndef _FIB_H_
 #define _FIB_H_
 
-struct fibheap;
 struct fibheap_el;
 typedef int (*voidcmp)(void *, void *);
 
+struct fibheap {
+	int	(*fh_cmp_fnct)(void *, void *);
+	int	fh_n;
+	int	fh_Dl;
+	struct	fibheap_el **fh_cons;
+	struct	fibheap_el *fh_min;
+	struct	fibheap_el *fh_root;
+	void	*fh_neginf;
+	int	fh_keys		: 1;
+#ifdef FH_STATS
+	int	fh_maxn;
+	int	fh_ninserts;
+	int	fh_nextracts;
+#endif
+};
+
+struct fibheap_el {
+	int	fhe_degree;
+	int	fhe_mark;
+	struct	fibheap_el *fhe_p;
+	struct	fibheap_el *fhe_child;
+	struct	fibheap_el *fhe_left;
+	struct	fibheap_el *fhe_right;
+	int	fhe_key;
+	void	*fhe_data;
+};
+
 /* functions for key heaps */
 struct fibheap *fh_makekeyheap(void);
+void fh_initheap(struct fibheap *);
 struct fibheap_el *fh_insertkey(struct fibheap *, int, void *);
 int fh_minkey(struct fibheap *);
 int fh_replacekey(struct fibheap *, struct fibheap_el *, int);
@@ -53,6 +80,8 @@ void *fh_min(struct fibheap *);
 void *fh_replacedata(struct fibheap *, struct fibheap_el *, void *);
 void *fh_delete(struct fibheap *, struct fibheap_el *);
 void fh_deleteheap(struct fibheap *);
+void fh_destroyheap(struct fibheap *h);
+/* this assumes both heaps are allocated on the heap */
 struct fibheap *fh_union(struct fibheap *, struct fibheap *);
 
 #ifdef FH_STATS

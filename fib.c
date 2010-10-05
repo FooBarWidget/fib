@@ -95,7 +95,7 @@ fh_deleteel(struct fibheap *h, struct fibheap_el *x)
 	x->fhe_key = key;
 }
 
-static void
+void
 fh_initheap(struct fibheap *new)
 {
 	new->fh_cmp_fnct = NULL;
@@ -113,7 +113,7 @@ fh_initheap(struct fibheap *new)
 #endif
 }
 
-static void
+void
 fh_destroyheap(struct fibheap *h)
 {
 	h->fh_cmp_fnct = NULL;
@@ -121,7 +121,6 @@ fh_destroyheap(struct fibheap *h)
 	if (h->fh_cons != NULL)
 		free(h->fh_cons);
 	h->fh_cons = NULL;
-	free(h);
 }
 
 /*
@@ -185,9 +184,11 @@ fh_union(struct fibheap *ha, struct fibheap *hb)
 		/* either one or both are empty */
 		if (ha->fh_root == NULL) {
 			fh_destroyheap(ha);
+			free(ha);
 			return hb;
 		} else {
 			fh_destroyheap(hb);
+			free(hb);
 			return ha;
 		}
 	}
@@ -206,6 +207,7 @@ fh_union(struct fibheap *ha, struct fibheap *hb)
 		ha->fh_min = hb->fh_min;
 
 	fh_destroyheap(hb);
+	free(hb);
 	return ha;
 }
 
@@ -220,6 +222,7 @@ fh_deleteheap(struct fibheap *h)
 		fhe_destroy(fh_extractminel(h));
 
 	fh_destroyheap(h);
+	free(h);
 }
 
 /*
