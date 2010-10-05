@@ -54,7 +54,7 @@ ceillog2(unsigned int a)
 	i = 0;
 	while (b) {
 		i = (i << 1);
-		if (a >= (1 << b)) {
+		if (a >= (unsigned int) (1 << b)) {
 			a /= (1 << b);
 			i = i | 1;
 		} else
@@ -96,20 +96,20 @@ fh_deleteel(struct fibheap *h, struct fibheap_el *x)
 }
 
 void
-fh_initheap(struct fibheap *new)
+fh_initheap(struct fibheap *h)
 {
-	new->fh_cmp_fnct = NULL;
-	new->fh_neginf = NULL;
-	new->fh_n = 0;
-	new->fh_Dl = -1;
-	new->fh_cons = NULL;
-	new->fh_min = NULL;
-	new->fh_root = NULL;
-	new->fh_keys = 0;
+	h->fh_cmp_fnct = NULL;
+	h->fh_neginf = NULL;
+	h->fh_n = 0;
+	h->fh_Dl = -1;
+	h->fh_cons = NULL;
+	h->fh_min = NULL;
+	h->fh_root = NULL;
+	h->fh_keys = 0;
 #ifdef FH_STATS
-	new->fh_maxn = 0;
-	new->fh_ninserts = 0;
-	new->fh_nextracts = 0;
+	h->fh_maxn = 0;
+	h->fh_ninserts = 0;
+	h->fh_nextracts = 0;
 #endif
 }
 
@@ -131,7 +131,7 @@ fh_makekeyheap()
 {
 	struct fibheap *n;
 
-	if ((n = malloc(sizeof *n)) == NULL)
+	if ((n = (struct fibheap *) malloc(sizeof *n)) == NULL)
 		return NULL;
 
 	fh_initheap(n);
@@ -145,7 +145,7 @@ fh_makeheap()
 {
 	struct fibheap *n;
 
-	if ((n = malloc(sizeof *n)) == NULL)
+	if ((n = (struct fibheap *) malloc(sizeof *n)) == NULL)
 		return NULL;
 
 	fh_initheap(n);
@@ -570,7 +570,7 @@ fhe_newelem()
 {
 	struct fibheap_el *e;
 
-	if ((e = malloc(sizeof *e)) == NULL)
+	if ((e = (struct fibheap_el *) malloc(sizeof *e)) == NULL)
 		return NULL;
 
 	fhe_initelem(e);

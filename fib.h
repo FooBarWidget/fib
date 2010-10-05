@@ -30,6 +30,10 @@
 #ifndef _FIB_H_
 #define _FIB_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 struct fibheap_el;
 typedef int (*voidcmp)(void *, void *);
 
@@ -89,5 +93,9 @@ int fh_maxn(struct fibheap *);
 int fh_ninserts(struct fibheap *);
 int fh_nextracts(struct fibheap *);
 #endif
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif /* _FIB_H_ */
